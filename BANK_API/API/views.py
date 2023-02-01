@@ -17,7 +17,10 @@ def branch(request):
   if request.method=="POST":
     instance=bankbranch(data=request.data)
     if instance.is_valid():
-        bank=Banks.objects.get(bank_id=request.data['bank_id'])
+        try:
+           bank=Banks.objects.get(bank_id=request.data['bank_id'])
+        except Branch.DoesNotExist:
+           return HttpResponse(status=404)       
         instance.bank=BankSeralizer(bank)
         instance.save()
         return Response(instance.data,status=status.HTTP_200_OK)
