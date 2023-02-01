@@ -11,7 +11,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 import pandas as pd
 from .decorater import capitalise
-from django.db import Q
+from django.db.models import Q
 @api_view(["GET","POST"])
 def branch(request):
   if request.method=="POST":
