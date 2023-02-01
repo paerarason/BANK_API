@@ -11,6 +11,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 import pandas as pd
 from .decorater import capitalise
+from django.db import Q
 @api_view(["GET","POST"])
 def branch(request):
   if request.method=="POST":
@@ -46,7 +47,7 @@ def bank(request):
 @capitalise
 @api_view(["GET"])
 def select(request,location):
-    branch=Branch.objects.filter(branch__icontains=location)
+    branch=Branch.objects.filter(Q(branch__icontains=location) | Q(address__icontains=location)).order_by('ifsc').values()
     if branch.count()>0:
         instance=bankbranch(branch,many=True)
         return Response(instance.data,status=status.HTTP_200_OK)
@@ -54,8 +55,8 @@ def select(request,location):
     
 
 @api_view(["GET"])
-def by_ifsc(request,pk):
-    
+def by_ifsc(request,pk): 
+
     try:
         snippet=Branch.objects.get(ifsc=pk)
     except Branch.DoesNotExist:
